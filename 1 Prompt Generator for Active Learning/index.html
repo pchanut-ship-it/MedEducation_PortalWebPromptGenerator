@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prompt Generator for Medical Educators</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;800&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6366F1;
+            --primary-hover: #4F46E5;
+            --secondary: #0EA5E9;
+            --accent: #F43F5E;
+            --bg-base: #F8FAFC;
+            --surface: rgba(255, 255, 255, 0.75);
+            --surface-hover: rgba(255, 255, 255, 0.95);
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border: rgba(99, 102, 241, 0.15);
+            --glass-blur: blur(24px);
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+        }
+
+        body {
+            font-family: 'Sarabun', 'Outfit', sans-serif;
+            background-color: var(--bg-base);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.08), transparent 30%),
+                radial-gradient(circle at 90% 80%, rgba(14, 165, 233, 0.08), transparent 30%),
+                linear-gradient(135deg, #F8FAFC 0%, #EFF6FF 100%);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Orbs */
+        .bg-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(100px);
+            z-index: -1;
+            mix-blend-mode: multiply;
+            animation: float 25s infinite ease-in-out alternate;
+        }
+        .shape-1 {
+            width: 600px; height: 600px;
+            background: rgba(147, 197, 253, 0.4);
+            top: -150px; left: -150px;
+        }
+        .shape-2 {
+            width: 500px; height: 500px;
+            background: rgba(196, 181, 253, 0.4);
+            bottom: -100px; right: -100px;
+            animation-delay: -5s;
+        }
+        .shape-3 {
+            width: 400px; height: 400px;
+            background: rgba(253, 164, 175, 0.3);
+            top: 40%; left: 40%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 50px) scale(1.05); }
+            100% { transform: translate(-20px, 30px) scale(0.95); }
+        }
+
+        header {
+            padding: 2.5rem 2rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.5);
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            position: sticky;
+            top: 0;
+            z-index: 20;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        h1 {
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4338CA 0%, #6366F1 50%, #0EA5E9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        main {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 2.5rem;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 2.5rem;
+            flex-grow: 1;
+            width: calc(100% - 5rem);
+        }
+
+        /* Sidebar: Template List */
+        .sidebar {
+            background: var(--surface);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 24px;
+            padding: 1.8rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: calc(100vh - 200px);
+            position: sticky;
+            top: 140px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .search-box {
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.8);
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            box-sizing: border-box;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .search-box input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #FFFFFF;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .search-box input::placeholder {
+            color: #94A3B8;
+        }
+        .search-box i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            transition: color 0.3s ease;
+        }
+        .search-box input:focus + i {
+            color: var(--primary);
+        }
+
+        .template-list {
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            padding-right: 0.8rem;
+            flex-grow: 1;
+        }
+        
+        .template-list::-webkit-scrollbar {
+            width: 6px;
+        }
+        .template-list::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.2);
+            border-radius: 10px;
+        }
+        .template-list::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.4);
+        }
+
+        .template-item {
+            flex-shrink: 0;
+            padding: 1.2rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            color: var(--text-main);
+            font-family: inherit;
+            position: relative;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .template-item::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            transform-origin: left;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .template-item:hover {
+            background: #FFFFFF;
+            transform: translateX(4px);
+            border-color: var(--border);
+            box-shadow: var(--shadow-md);
+        }
+
+        .template-item.active {
+            background: #FFFFFF;
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 25px -5px rgba(99, 102, 241, 0.15);
+        }
+        .template-item.active::before {
+            transform: scaleY(1);
+        }
+        
+        .template-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.4rem;
+            color: var(--text-main);
+        }
+        .template-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            line-height: 1.5;
+        }
+
+        /* Content Area */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 2.5rem;
+        }
+
+        .panel {
+            background: var(--surface);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid rgba(255,255,255,0.8);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            color: var(--text-main);
+        }
+        .panel-title i {
+            color: var(--primary);
+            background: rgba(99, 102, 241, 0.1);
+            padding: 0.8rem;
+            border-radius: 12px;
+        }
+
+        /* Form Elements */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 1.8rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.6rem;
+            position: relative;
+        }
+
+        .input-group label {
+            font-size: 0.95rem;
+            color: var(--text-main);
+            font-weight: 600;
+            margin-left: 0.2rem;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: #FFFFFF;
+            color: var(--text-main);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .input-group input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15), inset 0 2px 4px rgba(0,0,0,0.02);
+            transform: translateY(-2px);
+        }
+        
+        .input-group input::placeholder {
+            color: #94A3B8;
+        }
+
+        /* Result Area - Light Code Editor Style */
+        .terminal-container {
+            border-radius: 16px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            background: #FFFFFF;
+        }
+
+        .terminal-header {
+            display: flex;
+            align-items: center;
+            padding: 0.8rem 1.2rem;
+            background: #F1F5F9;
+            border-bottom: 1px solid #E2E8F0;
+            gap: 8px;
+        }
+        .mac-btn {
+            width: 12px; height: 12px;
+            border-radius: 50%;
+        }
+        .mac-red { background: #FF5F56; }
+        .mac-yellow { background: #FFBD2E; }
+        .mac-green { background: #27C93F; }
+
+        .result-box {
+            padding: 2rem;
+            font-family: 'Sarabun', 'Consolas', monospace;
+            white-space: pre-wrap;
+            line-height: 1.8;
+            color: #334155;
+            max-height: 500px;
+            overflow-y: auto;
+            font-size: 1.05rem;
+            background: #FAFAFA;
+        }
+        
+        .result-box::-webkit-scrollbar {
+            width: 8px;
+        }
+        .result-box::-webkit-scrollbar-thumb {
+            background: #CBD5E1;
+            border-radius: 10px;
+        }
+        .result-box::-webkit-scrollbar-thumb:hover {
+            background: #94A3B8;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #6366F1, #3B82F6);
+            background-size: 200% auto;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.8rem;
+            border-radius: 12px;
+            font-weight: 600;
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: inline-flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.3), transparent);
+            transform: skewX(-20deg);
+            transition: all 0.6s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background-position: right center;
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+        }
+        
+        .btn:hover::after {
+            left: 150%;
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 6rem 2rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--secondary), var(--primary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.8;
+            filter: drop-shadow(0 10px 20px rgba(14, 165, 233, 0.2));
+            animation: pulse 3s infinite ease-in-out;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            main {
+                grid-template-columns: 1fr;
+            }
+            .sidebar {
+                height: 400px;
+                position: static;
+            }
+        }
+
+        /* Notification */
+        #notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #10B981;
+            color: white;
+            padding: 1.2rem 2.5rem;
+            border-radius: 16px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transform: translateY(150%) scale(0.9);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55);
+            z-index: 100;
+        }
+        #notification.show {
+            transform: translateY(0) scale(1);
+            opacity: 1;
+        }
+        #notification i {
+            font-size: 1.5rem;
+        }
+        
+        .description-box {
+            background: rgba(99, 102, 241, 0.05);
+            border-left: 4px solid var(--primary);
+            padding: 1rem 1.5rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 2rem;
+            color: var(--text-main);
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+    <div class="bg-shape shape-3"></div>
+
+    <header>
+        <h1>Prompt Generator</h1>
+        <div class="subtitle">for Medical Educators</div>
+    </header>
+
+    <main>
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="search-box">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchInput" placeholder="ค้นหา Template...">
+            </div>
+            <div class="template-list" id="templateList">
+                <!-- Items populated via JS -->
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="content" id="contentArea">
+            <div class="panel empty-state" id="emptyState">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h2>เลือก Template เพื่อเริ่มต้น</h2>
+                <p>เลือกรูปแบบการสอนจากเมนูด้านซ้ายเพื่อสร้าง Prompt ของคุณ</p>
+            </div>
+            
+            <div id="activeState" style="display: none; flex-direction: column; gap: 2.5rem;">
+                <!-- Form Panel -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> <span id="lblTitle">Template Name</span></h2>
+                    </div>
+                    <div class="description-box" id="lblDescription">
+                        Description text here
+                    </div>
+                    
+                    <div id="variablesForm" class="form-grid">
+                        <!-- Inputs populated via JS -->
+                    </div>
+                </div>
+
+                <!-- Result Panel -->
+                <div class="panel">
+                    <div class="panel-header">
+                        <h2 class="panel-title"><i class="fa-solid fa-terminal"></i> ผลลัพธ์ Prompt</h2>
+                        <button class="btn" id="btnCopy"><i class="fa-solid fa-copy"></i> คัดลอก Prompt</button>
+                    </div>
+                    <div class="terminal-container">
+                        <div class="terminal-header">
+                            <div class="mac-btn mac-red"></div>
+                            <div class="mac-btn mac-yellow"></div>
+                            <div class="mac-btn mac-green"></div>
+                        </div>
+                        <div class="result-box" id="resultPrompt"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="notification">
+        <i class="fa-solid fa-check-circle"></i> คัดลอก Prompt สำเร็จ!
+    </div>
+
+    <!-- Data source -->
+    <script src="data.js"></script>
+    
+    <!-- Application Logic -->
+    <script>
+        const descriptions = {
+            "Flipped Classroom": "ผู้เรียนศึกษาเนื้อหามาก่อนล่วงหน้า และใช้เวลาในห้องเรียนสำหรับทำกิจกรรมและประยุกต์ใช้ความรู้",
+            "Case-Based Learning": "การเรียนรู้จากกรณีศึกษาหรือสถานการณ์จำลอง เพื่อวิเคราะห์และแก้ไขปัญหา",
+            "Team-Based Learning": "การเรียนรู้แบบทีม เน้นการทดสอบความเข้าใจเดี่ยวและกลุ่ม ก่อนประยุกต์ใช้ในการแก้ปัญหา",
+            "Progressive Disclosure": "การค่อยๆ เปิดเผยข้อมูลผู้ป่วยทีละขั้น เพื่อฝึกการให้เหตุผลทางคลินิก",
+            "Simulation": "การจำลองสถานการณ์เสมือนจริง เพื่อฝึกทักษะทางคลินิกและการตัดสินใจ",
+            "OSCE": "การสอบปฏิบัติทางคลินิกแบบเป็นฐาน เพื่อประเมินทักษะทางคลินิก",
+            "Debate": "การโต้วาทีทางการแพทย์ เพื่อฝึกวิเคราะห์หลักฐานเชิงประจักษ์",
+            "PBL": "การใช้ปัญหาเป็นจุดเริ่มต้น เพื่อกระตุ้นให้ผู้เรียนค้นคว้าและเรียนรู้ด้วยตนเอง",
+            "TBL Master Prompt": "สร้างชุดการเรียนรู้ Team-Based Learning แบบสมบูรณ์",
+            "CBL Master Prompt": "สร้างชุดการเรียนรู้ Case-Based Learning แบบสมบูรณ์",
+            "Clinical Reasoning Prompt": "สร้างชุดการเรียนรู้ที่เน้นกระบวนการให้เหตุผลทางคลินิก (Clinical Reasoning)",
+            "Simulation Prompt": "สร้างสถานการณ์จำลอง (Simulation) ทางการแพทย์แบบสมบูรณ์",
+            "OSCE Builder": "สร้างฐานสอบ OSCE พร้อมสคริปต์และแบบประเมิน",
+            "Debate Builder": "สร้างโครงสร้างการโต้วาทีทางการแพทย์",
+            "Diagnostic Escape Room": "กิจกรรมแก้ปริศนาวินิจฉัยโรคเป็นด่านๆ ภายใต้เวลาจำกัด",
+            "Mystery Diagnosis": "การไขปริศนาเคสผู้ป่วยที่ซับซ้อน คล้ายนักสืบ",
+            "Clinical Detective": "สืบสวนหาสาเหตุของโรคจากหลักฐานทางคลินิก",
+            "Choose Your Own Patient": "การเลือกตัดสินใจทางคลินิกที่ส่งผลต่อเนื้อเรื่องของผู้ป่วยในเส้นทางต่างๆ",
+            "Management War Room": "ห้องจำลองสถานการณ์ฉุกเฉินที่ต้องตัดสินใจแข่งกับเวลา",
+            "Guideline Battle": "การถกเถียงและวิเคราะห์เปรียบเทียบแนวทางการรักษา (Guidelines) ที่แตกต่างกัน",
+            "Reverse OSCE": "ผู้เรียนเป็นผู้ประเมินสถานการณ์ที่มีข้อผิดพลาด เพื่อหาทางแก้ไข",
+            "Near Miss Conference": "การวิเคราะห์เหตุการณ์เกือบพลาด เพื่อพัฒนาระบบความปลอดภัยของผู้ป่วย",
+            "AI vs Human Doctor": "เปรียบเทียบและวิเคราะห์การตัดสินใจระหว่าง AI และแพทย์มนุษย์",
+            "Grand Rounds Challenge": "การนำเสนอและวิเคราะห์เคสระดับสูงแบบเชิงลึก",
+            "MCQ": "การออกแบบข้อสอบปรนัย (Multiple Choice Questions) ตามสมรรถนะ",
+            "SBA": "การออกแบบข้อสอบแบบเลือกตอบข้อที่ดีที่สุด (Single Best Answer)",
+            "EMQ": "การออกแบบข้อสอบจับคู่แบบขยาย (Extended Matching Questions)",
+            "OSCE Checklist": "การสร้างแบบประเมินทักษะสำหรับสถานี OSCE"
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            let templates = [];
+            let activeTemplateIndex = -1;
+            let currentVariables = [];
+
+            // 1. Parse rawData
+            function initData() {
+                if (typeof rawData === 'undefined') {
+                    console.error("No data found");
+                    return;
+                }
+                let textData = typeof rawData === 'string' ? rawData : (rawData.value || '');
+                const lines = textData.split(/\r?\n/);
+                let currentTemplate = null;
+                let captureMode = null;
+                let rccfBlock = false;
+                
+                for (let i = 0; i < lines.length; i++) {
+                    let line = lines[i].trim();
+                    if (!line) continue;
+                    
+                    // Filter out header/footer lines
+                    if (line.match(/^\d+$/)) continue;
+                    if (line.includes("Top 5 Active Learning")) continue;
+                    
+                    if (line === "วัตถุประสงค์:" && i > 0) {
+                        let title = lines[i-1].trim();
+                        // Ignore some malformed titles
+                        if(title.length > 100) continue; 
+                        
+                        currentTemplate = {
+                            title: title,
+                            objective: "",
+                            role: "",
+                            task: "",
+                            conditions: "",
+                            format: "",
+                            rawContent: ""
+                        };
+                        templates.push(currentTemplate);
+                        captureMode = "objective";
+                        continue;
+                    }
+                    
+                    if (!currentTemplate) continue;
+
+                    // Match variations of "Template Prompt (RCCF):"
+                    if (line.includes("Template Prompt")) {
+                        rccfBlock = true;
+                        captureMode = null;
+                        continue;
+                    }
+
+                    if (rccfBlock) {
+                        if (line === "จงสวมบทบาทเป็น:") {
+                            captureMode = "role";
+                            continue;
+                        } else if (line === "หน้าที่ของคุณคือ:") {
+                            captureMode = "task";
+                            continue;
+                        } else if (line === "โดยมีเงื่อนไขดังนี้:") {
+                            captureMode = "conditions";
+                            continue;
+                        } else if (line === "รูปแบบผลลัพธ์ที่ต้องการ:") {
+                            captureMode = "format";
+                            continue;
+                        }
+                    }
+
+                    if (captureMode) {
+                        if (currentTemplate[captureMode] !== "") {
+                            currentTemplate[captureMode] += "\n" + line;
+                        } else {
+                            currentTemplate[captureMode] = line;
+                        }
+                    }
+                }
+                
+                // Filter out empty or incomplete templates or "Prompt ตัวอย่าง" placeholders
+                templates = templates.filter(t => t.role && t.task && t.title && !t.title.includes("Prompt ตัวอย่าง"));
+                
+                // Add custom descriptions
+                templates.forEach(t => {
+                    t.customDesc = descriptions[t.title] || t.objective;
+                });
+
+                renderTemplateList(templates);
+            }
+
+            // 2. Render Sidebar
+            const templateListEl = document.getElementById('templateList');
+            const searchInput = document.getElementById('searchInput');
+            
+            function renderTemplateList(list) {
+                templateListEl.innerHTML = '';
+                list.forEach((t, index) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'template-item';
+                    btn.innerHTML = `
+                        <div class="template-title">${t.title}</div>
+                        <div class="template-desc">${t.customDesc}</div>
+                    `;
+                    btn.onclick = () => selectTemplate(t, btn);
+                    templateListEl.appendChild(btn);
+                    t.element = btn; // Store ref
+                });
+            }
+
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                const filtered = templates.filter(t => 
+                    t.title.toLowerCase().includes(term) || 
+                    t.customDesc.toLowerCase().includes(term)
+                );
+                templates.forEach(t => {
+                    if (filtered.includes(t)) {
+                        t.element.style.display = 'block';
+                    } else {
+                        t.element.style.display = 'none';
+                    }
+                });
+            });
+
+            // 3. Select Template
+            const emptyState = document.getElementById('emptyState');
+            const activeState = document.getElementById('activeState');
+            const lblTitle = document.getElementById('lblTitle');
+            const lblDescription = document.getElementById('lblDescription');
+            const variablesForm = document.getElementById('variablesForm');
+            const resultPrompt = document.getElementById('resultPrompt');
+
+            function selectTemplate(t, btnElement) {
+                // Update UI active state
+                document.querySelectorAll('.template-item').forEach(el => el.classList.remove('active'));
+                btnElement.classList.add('active');
+                
+                emptyState.style.display = 'none';
+                activeState.style.display = 'flex';
+                
+                lblTitle.textContent = t.title;
+                lblDescription.textContent = t.customDesc;
+
+                // Extract variables
+                const allText = t.role + " " + t.task + " " + t.conditions + " " + t.format;
+                const regex = /\[(.*?)\]/g;
+                let match;
+                const varsSet = new Set();
+                while ((match = regex.exec(allText)) !== null) {
+                    varsSet.add(match[1]);
+                }
+                currentVariables = Array.from(varsSet);
+
+                // Build Form
+                variablesForm.innerHTML = '';
+                if (currentVariables.length === 0) {
+                    variablesForm.innerHTML = '<p style="color:var(--text-muted); grid-column: 1/-1;">ไม่มีข้อมูลที่ต้องกรอกสำหรับ Template นี้</p>';
+                } else {
+                    currentVariables.forEach(v => {
+                        const group = document.createElement('div');
+                        group.className = 'input-group';
+                        
+                        // Map "เวลา" to "ระยะเวลาทำกิจกรรม" for display
+                        let labelText = v === 'เวลา' ? 'ระยะเวลาทำกิจกรรม' : v;
+                        
+                        group.innerHTML = `
+                            <label>${labelText}</label>
+                            <input type="text" data-var="${v}" placeholder="ระบุ ${labelText}..." oninput="updatePreview()">
+                        `;
+                        variablesForm.appendChild(group);
+                    });
+                }
+
+                window.currentTemplateData = t;
+                updatePreview();
+            }
+
+            // 4. Update Preview
+            window.updatePreview = function() {
+                const t = window.currentTemplateData;
+                if(!t) return;
+                
+                let promptText = 
+                    "จงสวมบทบาทเป็น:\n" + t.role + "\n\n" +
+                    "หน้าที่ของคุณคือ:\n" + t.task + "\n\n" +
+                    "โดยมีเงื่อนไขดังนี้:\n" + t.conditions + "\n\n" +
+                    "รูปแบบผลลัพธ์ที่ต้องการ:\n" + t.format;
+
+                // Replace variables
+                const inputs = variablesForm.querySelectorAll('input');
+                inputs.forEach(input => {
+                    const vName = input.getAttribute('data-var');
+                    const val = input.value.trim();
+                    if(val) {
+                        // Use split & join to replace all occurrences of [variable]
+                        promptText = promptText.split(`[${vName}]`).join(val);
+                    }
+                });
+
+                resultPrompt.textContent = promptText;
+            };
+
+            // 5. Copy to clipboard
+            document.getElementById('btnCopy').addEventListener('click', () => {
+                const text = resultPrompt.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const notif = document.getElementById('notification');
+                    notif.classList.add('show');
+                    setTimeout(() => {
+                        notif.classList.remove('show');
+                    }, 3000);
+                });
+            });
+
+            // Start
+            initData();
+        });
+    </script>
+</body>
+</html>
