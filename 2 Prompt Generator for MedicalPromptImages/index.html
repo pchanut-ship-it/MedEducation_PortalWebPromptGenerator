@@ -1,1 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Education Prompt Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Sarabun:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4F46E5;
+            --primary-light: #818CF8;
+            --secondary: #10B981;
+            --accent: #F43F5E;
+            --bg-grad-1: #EFF6FF;
+            --bg-grad-2: #E0E7FF;
+            --glass-bg: rgba(255, 255, 255, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.4);
+            --glass-shadow: 0 8px 32px rgba(31, 38, 135, 0.1);
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+        }
 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Sarabun', 'Outfit', sans-serif;
+            background: linear-gradient(135deg, var(--bg-grad-1) 0%, var(--bg-grad-2) 100%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Ambient Background Animations */
+        .ambient-shape {
+            position: fixed;
+            border-radius: 50%;
+            filter: blur(80px);
+            z-index: -1;
+            animation: float 20s infinite alternate ease-in-out;
+        }
+        .shape-1 {
+            width: 500px; height: 500px;
+            background: rgba(99, 102, 241, 0.3);
+            top: -100px; left: -100px;
+        }
+        .shape-2 {
+            width: 400px; height: 400px;
+            background: rgba(16, 185, 129, 0.2);
+            bottom: -50px; right: -50px;
+            animation-delay: -5s;
+        }
+        .shape-3 {
+            width: 300px; height: 300px;
+            background: rgba(244, 63, 94, 0.2);
+            top: 40%; left: 50%;
+            animation-delay: -10s;
+        }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(50px, 30px) scale(1.1); }
+        }
+
+        /* Header */
+        header {
+            padding: 2rem;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.4);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid var(--glass-border);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        
+        h1 {
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(to right, #4F46E5, #10B981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            letter-spacing: 0.5px;
+        }
+
+        /* Layout */
+        main {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            max-width: 1600px;
+            margin: 0 auto;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        /* Glassmorphism Panel */
+        .glass-panel {
+            background: var(--glass-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            box-shadow: var(--glass-shadow);
+            padding: 1.5rem;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            height: calc(100vh - 160px);
+            position: sticky;
+            top: 130px;
+        }
+
+        .search-container {
+            position: relative;
+        }
+        
+        .search-container input {
+            width: 100%;
+            padding: 1rem 1rem 1rem 3rem;
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.5);
+            font-family: inherit;
+            font-size: 1rem;
+            color: var(--text-main);
+            transition: all 0.3s ease;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        
+        .search-container input:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--primary-light);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+        }
+
+        .search-container i {
+            position: absolute;
+            left: 1.2rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        .template-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            overflow-y: auto;
+            padding-right: 0.5rem;
+        }
+
+        .template-list::-webkit-scrollbar { width: 6px; }
+        .template-list::-webkit-scrollbar-thumb { background: rgba(99, 102, 241, 0.3); border-radius: 10px; }
+        
+        .template-item {
+            padding: 1.2rem;
+            border-radius: 16px;
+            background: rgba(255,255,255,0.4);
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            text-align: left;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .template-item::before {
+            content: '';
+            position: absolute;
+            left: 0; top: 0;
+            height: 100%; width: 4px;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+            border-radius: 4px 0 0 4px;
+        }
+
+        .template-item:hover {
+            background: rgba(255,255,255,0.8);
+            transform: translateX(4px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        .template-item.active {
+            background: #fff;
+            border-color: rgba(99, 102, 241, 0.3);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.1);
+        }
+        .template-item.active::before { transform: scaleY(1); }
+
+        .item-title {
+            font-weight: 600;
+            color: var(--text-main);
+            margin-bottom: 0.3rem;
+            font-size: 1.05rem;
+        }
+        .item-desc {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+
+        /* Main Content */
+        .content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            min-height: 400px;
+            color: var(--text-muted);
+            text-align: center;
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            opacity: 0.8;
+            animation: pulse 3s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        #activeState {
+            display: none;
+            flex-direction: column;
+            gap: 2rem;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .layout-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+
+        .preview-image {
+            width: 100%;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            object-fit: cover;
+            border: 4px solid #fff;
+            background: #fff;
+            transition: transform 0.3s ease;
+        }
+        .preview-image:hover {
+            transform: scale(1.02);
+        }
+
+        .panel-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+        }
+        
+        .panel-title i {
+            color: var(--primary);
+            background: rgba(99,102,241,0.1);
+            padding: 0.6rem;
+            border-radius: 12px;
+        }
+
+        .meta-box {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--secondary);
+            padding: 1rem;
+            border-radius: 0 12px 12px 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .meta-title { font-size: 0.85rem; font-weight: 700; color: var(--secondary); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 0.3rem;}
+        .meta-desc { font-size: 1rem; color: var(--text-main); }
+
+        /* Form */
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .input-group label {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+            text-transform: capitalize;
+        }
+
+        .input-group input,
+        .input-group textarea {
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            resize: vertical;
+        }
+
+        .input-group input:focus,
+        .input-group textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        .input-group select {
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748B%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1.2rem top 50%;
+            background-size: 0.65rem auto;
+        }
+
+        .input-group select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background-color: #fff;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Result Area */
+        .terminal {
+            background: #0F172A;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .terminal-header {
+            background: #1E293B;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .mac-btn { width: 12px; height: 12px; border-radius: 50%; }
+        .mac-btn.red { background: #FF5F56; }
+        .mac-btn.yellow { background: #FFBD2E; }
+        .mac-btn.green { background: #27C93F; }
+
+        .terminal-body {
+            padding: 1.5rem;
+            color: #E2E8F0;
+            font-family: 'Consolas', monospace;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            white-space: pre-wrap;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .terminal-body::-webkit-scrollbar { width: 8px; }
+        .terminal-body::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 1.5rem;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .checkbox-group input {
+            width: 1.2rem;
+            height: 1.2rem;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.4);
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--secondary);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.8rem;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            transform: translateY(150%);
+            opacity: 0;
+            transition: all 0.4s cubic-bezier(0.68, -0.55, 0.26, 1.55);
+            z-index: 100;
+        }
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        @media (max-width: 1024px) {
+            main { grid-template-columns: 1fr; }
+            .sidebar { height: 400px; position: relative; top: 0; }
+            .layout-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="ambient-shape shape-1"></div>
+    <div class="ambient-shape shape-2"></div>
+    <div class="ambient-shape shape-3"></div>
+
+    <header>
+        <h1>Medical Prompts</h1>
+        <div class="subtitle">AI Generator for Medical Education Graphics</div>
+    </header>
+
+    <main>
+        <aside class="sidebar glass-panel">
+            <div class="search-container">
+                <i class="fa-solid fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Search templates...">
+            </div>
+            <div class="template-list" id="templateList">
+                <!-- Templates -->
+            </div>
+        </aside>
+
+        <section class="content-area">
+            <div class="glass-panel empty-state" id="emptyState">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+                <h2>Select a Template</h2>
+                <p>Choose a graphic style from the sidebar to start generating your prompt.</p>
+            </div>
+
+            <div id="activeState">
+                <div class="layout-grid">
+                    <div class="glass-panel">
+                        <h2 class="panel-title"><i class="fa-solid fa-image"></i> Example Graphic</h2>
+                        <div class="meta-box">
+                            <div class="meta-title">Suitable For</div>
+                            <div class="meta-desc" id="lblSuitableFor">Anatomy, Pathophysiology</div>
+                        </div>
+                        <img id="previewImage" src="" alt="Example" class="preview-image">
+                    </div>
+
+                    <div class="glass-panel">
+                        <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> Prompt Variables</h2>
+                        <p style="color: var(--text-muted); margin-bottom: 1.5rem; font-size: 0.95rem;">
+                            Fill in the fields below. The prompt will update automatically.
+                        </p>
+                        <div class="form-container" id="variablesForm">
+                            <!-- Inputs -->
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-panel">
+                    <h2 class="panel-title"><i class="fa-solid fa-terminal"></i> Generated Prompt</h2>
+                    
+                    <div class="terminal">
+                        <div class="terminal-header">
+                            <div class="mac-btn red"></div>
+                            <div class="mac-btn yellow"></div>
+                            <div class="mac-btn green"></div>
+                            <span style="color: #64748B; font-size: 0.8rem; margin-left: auto;">prompt.txt</span>
+                        </div>
+                        <div class="terminal-body" id="resultPrompt"></div>
+                    </div>
+
+                    <div class="controls">
+                        <label class="checkbox-group">
+                            <input type="checkbox" id="chkNegativePrompt" checked onchange="updatePrompt()">
+                            <span>Include Universal Negative Prompt</span>
+                        </label>
+                        <button class="btn" id="btnCopy"><i class="fa-solid fa-copy"></i> Copy Prompt</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div class="notification" id="notification">
+        <i class="fa-solid fa-check-circle"></i> Prompt Copied!
+    </div>
+
+    <!-- Load Data -->
+    <script src="data.js"></script>
+    
+    <!-- Logic -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const templateList = document.getElementById('templateList');
+            const searchInput = document.getElementById('searchInput');
+            const emptyState = document.getElementById('emptyState');
+            const activeState = document.getElementById('activeState');
+            const previewImage = document.getElementById('previewImage');
+            const lblSuitableFor = document.getElementById('lblSuitableFor');
+            const variablesForm = document.getElementById('variablesForm');
+            const resultPrompt = document.getElementById('resultPrompt');
+            const chkNegativePrompt = document.getElementById('chkNegativePrompt');
+            const btnCopy = document.getElementById('btnCopy');
+            
+            let currentTemplate = null;
+            let currentVariables = [];
+
+            // 1. Render Template List
+            function renderList(templates) {
+                templateList.innerHTML = '';
+                templates.forEach(t => {
+                    const el = document.createElement('div');
+                    el.className = 'template-item';
+                    el.innerHTML = `
+                        <div class="item-title">${t.title}</div>
+                        <div class="item-desc">${t.suitableFor}</div>
+                    `;
+                    el.onclick = () => selectTemplate(t, el);
+                    t.element = el;
+                    templateList.appendChild(el);
+                });
+            }
+
+            renderList(templatesData);
+
+            // 2. Search filtering
+            searchInput.addEventListener('input', (e) => {
+                const term = e.target.value.toLowerCase();
+                templatesData.forEach(t => {
+                    const match = t.title.toLowerCase().includes(term) || t.suitableFor.toLowerCase().includes(term);
+                    t.element.style.display = match ? 'block' : 'none';
+                });
+            });
+
+            // 3. Select Template
+            function selectTemplate(template, element) {
+                document.querySelectorAll('.template-item').forEach(el => el.classList.remove('active'));
+                element.classList.add('active');
+                
+                currentTemplate = template;
+                
+                emptyState.style.display = 'none';
+                activeState.style.display = 'flex';
+                
+                lblSuitableFor.textContent = template.suitableFor;
+                // Set image path based on the folder structure
+                previewImage.src = 'Example_of_Images/' + template.image;
+                previewImage.onerror = () => {
+                    previewImage.src = 'https://via.placeholder.com/600x400?text=Image+Not+Found';
+                };
+
+                // Extract variables eg [topic] or [label|opt1/opt2]
+                const regex = /\[(.*?)\]/g;
+                let match;
+                const varsSet = new Set();
+                while ((match = regex.exec(template.prompt)) !== null) {
+                    varsSet.add(match[1]);
+                }
+                currentVariables = Array.from(varsSet);
+
+                // Build Form
+                variablesForm.innerHTML = '';
+                if(currentVariables.length === 0) {
+                    variablesForm.innerHTML = '<div style="color: var(--text-muted)">No variables required for this template.</div>';
+                } else {
+                    currentVariables.forEach(v => {
+                        const group = document.createElement('div');
+                        group.className = 'input-group';
+                        
+                        if (v.includes('|')) {
+                            const parts = v.split('|');
+                            const label = parts[0];
+                            const options = parts[1].split('/');
+                            
+                            let selectHtml = `<select data-var="${v}" onchange="updatePrompt()">`;
+                            selectHtml += `<option value="" disabled selected>-- เลือก ${label} --</option>`;
+                            options.forEach(opt => {
+                                selectHtml += `<option value="${opt.trim()}">${opt.trim()}</option>`;
+                            });
+                            selectHtml += `</select>`;
+                            
+                            group.innerHTML = `
+                                <label>${label.trim()}</label>
+                                ${selectHtml}
+                            `;
+                        } else if (v.includes('รายละเอียดเพิ่มเติม')) {
+                            group.innerHTML = `
+                                <label>${v}</label>
+                                <textarea data-var="${v}" placeholder="ระบุ ${v} (เว้นว่างไว้ถ้าไม่มี)..." oninput="updatePrompt()" rows="3"></textarea>
+                            `;
+                        } else {
+                            group.innerHTML = `
+                                <label>${v}</label>
+                                <input type="text" data-var="${v}" placeholder="ระบุ ${v}..." oninput="updatePrompt()">
+                            `;
+                        }
+                        variablesForm.appendChild(group);
+                    });
+                }
+                
+                updatePrompt();
+                
+                // Scroll to top of active state on mobile
+                if(window.innerWidth <= 1024) {
+                    activeState.scrollIntoView({ behavior: 'smooth' });
+                }
+            }
+
+            // 4. Update Prompt Realtime
+            window.updatePrompt = function() {
+                if(!currentTemplate) return;
+                
+                let finalPrompt = currentTemplate.prompt;
+                
+                // Replace each variable
+                currentVariables.forEach(v => {
+                    const input = document.querySelector(`[data-var="${v}"]`);
+                    let val = `[${v}]`; // fallback
+                    
+                    if (input) {
+                        if (input.tagName === 'SELECT') {
+                            if (input.value) {
+                                val = input.value;
+                            } else {
+                                val = `[${v.split('|')[0]}]`;
+                            }
+                        } else {
+                            if (input.value.trim() !== '') {
+                                val = input.value;
+                            } else {
+                                if (v.includes('รายละเอียดเพิ่มเติม')) {
+                                    val = 'ไม่มี';
+                                } else {
+                                    val = `[${v}]`;
+                                }
+                            }
+                        }
+                    }
+                    
+                    // Safe replace all occurrences without regex escaping
+                    finalPrompt = finalPrompt.split(`[${v}]`).join(val);
+                });
+
+                // Add Negative Prompt if checked
+                if(chkNegativePrompt.checked) {
+                    finalPrompt += '\n\nNegative Prompt:\n' + negativePromptText;
+                }
+
+                resultPrompt.textContent = finalPrompt;
+            }
+
+            // 5. Copy to Clipboard
+            btnCopy.addEventListener('click', () => {
+                const text = resultPrompt.textContent;
+                navigator.clipboard.writeText(text).then(() => {
+                    const notif = document.getElementById('notification');
+                    notif.classList.add('show');
+                    setTimeout(() => {
+                        notif.classList.remove('show');
+                    }, 3000);
+                }).catch(err => {
+                    console.error('Failed to copy: ', err);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
