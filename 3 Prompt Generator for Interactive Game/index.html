@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-A-S-Y Prompt Generator สำหรับสื่อการสอน (Medical Edition)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'Prompt', sans-serif;
+            background-color: #f3f4f6;
+        }
+        /* Custom scrollbar for textarea */
+        textarea::-webkit-scrollbar {
+            width: 8px;
+        }
+        textarea::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        textarea::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="text-gray-800 antialiased min-h-screen pb-12">
+
+    <div class="max-w-4xl mx-auto px-4 pt-10">
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-600 mb-3 flex items-center justify-center gap-3">
+                <i data-lucide="sparkles" class="w-8 h-8"></i>
+                E-A-S-Y Prompt Generator
+            </h1>
+            <p class="text-gray-600 text-lg">ระบุความต้องการสร้างสื่อการสอน/Interactive สำหรับนักศึกษาแพทย์</p>
+        </div>
+
+        <form id="promptForm" class="space-y-6">
+            
+            <!-- 1. [E] Explain -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-blue-50 px-6 py-4 border-b border-blue-100 flex items-center gap-3">
+                    <span class="bg-blue-600 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">E</span>
+                    <h2 class="text-xl font-semibold text-blue-800">Explain: รูปแบบทรัพยากรที่ต้องการ</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="เกมตอบคำถามแบบอินเทอร์แอคทีฟ (Interactive Quiz Game)" class="w-5 h-5 text-blue-600 focus:ring-blue-500" required>
+                            <span>เกมตอบคำถามแบบอินเทอร์แอคทีฟ</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="ใบงาน/แบบฝึกหัด (Worksheet)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>ใบงาน/แบบฝึกหัด (Worksheet)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="สื่อนำเสนอการสอน (Presentation Slides)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>สื่อนำเสนอการสอน (Presentation Slides)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="อินโฟกราฟิกสรุปบทเรียน (Infographic)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>อินโฟกราฟิกสรุปบทเรียน (Infographic)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="บัตรคำศัพท์ (Flashcards)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>บัตรคำศัพท์ (Flashcards)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="แผนการจัดการเรียนรู้ (Lesson Plan)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>แผนการจัดการเรียนรู้ (Lesson Plan)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="บอร์ดเกมการศึกษา (Educational Board Game)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>บอร์ดเกมการศึกษา (Educational Board Game)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="บทเรียนอิเล็กทรอนิกส์ (E-Learning/Microlearning)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>บทเรียนอิเล็กทรอนิกส์ (E-Learning)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="ใบความรู้/เอกสารประกอบการเรียน (Study Guide/Handout)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>ใบความรู้/เอกสารประกอบการเรียน (Study Guide)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="นิทาน/เรื่องสั้นประกอบการสอน (Educational Story)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>นิทาน/เรื่องสั้นประกอบการสอน (Story)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="คู่มือการทดลอง/กิจกรรม (Activity/Experiment Guide)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>คู่มือการทดลอง/กิจกรรม (Activity Guide)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="สถานการณ์จำลอง/บทบาทสมมติ (Role-play Scenario)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>สถานการณ์จำลอง/บทบาทสมมติ (Role-play)</span>
+                        </label>
+                        <label class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="explain" value="แบบทดสอบประเมินผล (Assessment/Exam)" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <span>แบบทดสอบประเมินผล (Assessment/Exam)</span>
+                        </label>
+                        <div class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition focus-within:ring-1 focus-within:ring-blue-500 focus-within:border-blue-500">
+                            <input type="radio" name="explain" value="other" id="explainOtherRadio" class="w-5 h-5 text-blue-600 focus:ring-blue-500">
+                            <label for="explainOtherRadio" class="whitespace-nowrap cursor-pointer">อื่นๆ:</label>
+                            <input type="text" id="explainOtherText" class="w-full border-b border-gray-300 focus:border-blue-500 focus:ring-0 p-1 text-sm bg-transparent outline-none text-gray-700" placeholder="ระบุรูปแบบที่ต้องการ" onfocus="document.getElementById('explainOtherRadio').checked = true;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. [A] Assign (Modified for Medical Students) -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-green-50 px-6 py-4 border-b border-green-100 flex items-center gap-3">
+                    <span class="bg-green-600 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">A</span>
+                    <h2 class="text-xl font-semibold text-green-800">Assign: สาขาวิชาและชั้นปี (น.ศ.แพทย์)</h2>
+                </div>
+                <div class="p-6 grid md:grid-cols-2 gap-8">
+                    <!-- วิชา -->
+                    <div>
+                        <h3 class="font-medium text-gray-700 mb-3 border-b pb-2">สาขาวิชา / ภาควิชา</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="วิทยาศาสตร์การแพทย์พื้นฐาน (Pre-clinic: Anatomy, Physiology, Pathology ฯลฯ)" class="w-4 h-4 text-green-600 focus:ring-green-500" required>
+                                <span>ชั้นปรีคลินิก (Pre-clinic)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="อายุรศาสตร์ (Internal Medicine)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>อายุรศาสตร์ (Internal Medicine)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="ศัลยศาสตร์ / ออร์โธปิดิกส์ (Surgery / Orthopedics)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>ศัลยศาสตร์ / ออร์โธปิดิกส์ (Surgery/Ortho)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="สูติศาสตร์-นรีเวชวิทยา (OB/GYN)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>สูติศาสตร์-นรีเวชวิทยา (OB/GYN)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="กุมารเวชศาสตร์ (Pediatrics)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>กุมารเวชศาสตร์ (Pediatrics)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="เวชศาสตร์ฉุกเฉิน / เวชศาสตร์ครอบครัว (ER / Family Med)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>เวชศาสตร์ฉุกเฉิน / ครอบครัว (ER/Family Med)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="ทักษะทางคลินิกและหัตถการ (Clinical / Procedural Skills)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>ทักษะทางคลินิกและหัตถการ (Clinical Skills)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="subject" value="เวชจริยศาสตร์และกฎหมายการแพทย์ (Medical Ethics and Law)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>เวชจริยศาสตร์ (Medical Ethics)</span>
+                            </label>
+                            <div class="flex items-center space-x-2 mt-2 p-2 rounded-lg hover:bg-gray-50 transition focus-within:ring-1 focus-within:ring-green-500 focus-within:border-green-500">
+                                <input type="radio" name="subject" value="other" id="subjectOtherRadio" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <label for="subjectOtherRadio" class="whitespace-nowrap cursor-pointer text-sm">อื่นๆ (ระบุ):</label>
+                                <input type="text" id="subjectOtherText" class="w-full border-b border-gray-300 focus:border-green-500 focus:ring-0 p-1 text-sm bg-transparent outline-none text-gray-700" placeholder="เช่น จิตเวชศาสตร์, จักษุวิทยา..." onfocus="document.getElementById('subjectOtherRadio').checked = true;">
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ระดับชั้น -->
+                    <div>
+                        <h3 class="font-medium text-gray-700 mb-3 border-b pb-2">ชั้นปี / ระดับการศึกษา</h3>
+                        <div class="space-y-2">
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="grade" value="ชั้นปีที่ 1 (เตรียมแพทยศาสตร์)" class="w-4 h-4 text-green-600 focus:ring-green-500" required>
+                                <span>ชั้นปีที่ 1 (เตรียมแพทยศาสตร์)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="grade" value="ชั้นปีที่ 2-3 (ปรีคลินิก - Pre-clinical years)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>ชั้นปีที่ 2-3 (ปรีคลินิก)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="grade" value="ชั้นปีที่ 4-5 (คลินิก - Clinical years)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>ชั้นปีที่ 4-5 (คลินิก)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="grade" value="ชั้นปีที่ 6 (Extern / นักศึกษาแพทย์ฝึกหัด)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>ชั้นปีที่ 6 (Extern)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="grade" value="แพทย์ใช้ทุน (Intern) / แพทย์ประจำบ้าน (Resident)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>แพทย์ใช้ทุน / แพทย์ประจำบ้าน (Intern/Resident)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 cursor-pointer">
+                                <input type="radio" name="grade" value="แพทย์เฉพาะทาง (Fellow) / แพทย์เวชปฏิบัติทั่วไป (GP)" class="w-4 h-4 text-green-600 focus:ring-green-500">
+                                <span>บุคลากรทางการแพทย์ / แพทย์เวชปฏิบัติ (CME)</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. [S] Specify -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-orange-50 px-6 py-4 border-b border-orange-100 flex items-center gap-3">
+                    <span class="bg-orange-500 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">S</span>
+                    <h2 class="text-xl font-semibold text-orange-800">Specify: เนื้อหาและรูปแบบคำถาม</h2>
+                </div>
+                <div class="p-6 space-y-6">
+                    <div>
+                        <label for="topic" class="block font-medium text-gray-700 mb-2">หัวข้อบทเรียน <span class="text-gray-400 font-normal text-sm">(ระบุชื่อเรื่อง เช่น "Anatomy of the Heart", "Management of DKA")</span></label>
+                        <input type="text" id="topic" class="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-orange-500 focus:border-orange-500 outline-none transition" placeholder="พิมพ์หัวข้อบทเรียนที่นี่..." required>
+                    </div>
+
+                    <div>
+                        <h3 class="font-medium text-gray-700 mb-3">รูปแบบคำถามที่ต้องการ (เลือกได้มากกว่า 1 ข้อ)</h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" name="qType" value="ปรนัย 4-5 ตัวเลือก (Multiple Choice Questions - MCQs)" class="w-5 h-5 rounded text-orange-500 focus:ring-orange-500">
+                                <span>ปรนัย (Multiple Choice Questions - MCQs)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" name="qType" value="โจทย์สถานการณ์จำลอง (Clinical Vignette / Case Study)" class="w-5 h-5 rounded text-orange-500 focus:ring-orange-500">
+                                <span>โจทย์สถานการณ์ (Clinical Vignette/Case)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" name="qType" value="คำถามแบบจับคู่ (Extended Matching Questions - EMQs)" class="w-5 h-5 rounded text-orange-500 focus:ring-orange-500">
+                                <span>คำถามแบบจับคู่ (Extended Matching - EMQs)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" name="qType" value="คำถามเติมคำ / อัตนัยสั้น (Short Answer Questions - SAQs)" class="w-5 h-5 rounded text-orange-500 focus:ring-orange-500">
+                                <span>อัตนัยสั้น (Short Answer Questions - SAQs)</span>
+                            </label>
+                            <label class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 cursor-pointer">
+                                <input type="checkbox" name="qType" value="เรียงลำดับขั้นตอน/การจัดการผู้ป่วย (Management Sequencing)" class="w-5 h-5 rounded text-orange-500 focus:ring-orange-500">
+                                <span>เรียงลำดับขั้นตอน/การจัดการผู้ป่วย</span>
+                            </label>
+                            <div class="flex items-center space-x-3 p-2 rounded hover:bg-gray-50 transition focus-within:ring-1 focus-within:ring-orange-500">
+                                <input type="checkbox" name="qType" value="other" id="qTypeOtherCheck" class="w-5 h-5 rounded text-orange-500 focus:ring-orange-500">
+                                <label for="qTypeOtherCheck" class="whitespace-nowrap cursor-pointer">อื่นๆ:</label>
+                                <input type="text" id="qTypeOtherText" class="w-full border-b border-gray-300 focus:border-orange-500 focus:ring-0 p-1 text-sm bg-transparent outline-none text-gray-700" placeholder="เช่น OSCE Checklist, MEQ..." onfocus="document.getElementById('qTypeOtherCheck').checked = true;">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. [Y] Your Style -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-purple-50 px-6 py-4 border-b border-purple-100 flex items-center gap-3">
+                    <span class="bg-purple-600 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">Y</span>
+                    <h2 class="text-xl font-semibold text-purple-800">Your Style: สไตล์และการตกแต่ง</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="style" value="Professional & Academic: เป็นทางการ น่าเชื่อถือ ข้อมูลแม่นยำอ้างอิงตาม Guideline" class="w-5 h-5 mt-0.5 text-purple-600 focus:ring-purple-500" required>
+                            <div>
+                                <span class="block font-medium">Professional & Academic</span>
+                                <span class="text-sm text-gray-500">เป็นทางการ น่าเชื่อถือ อ้างอิงตาม Guideline มาตรฐาน</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="style" value="Minimalist: เรียบง่าย สะอาดตา เน้นใจความสำคัญและการจดจำ" class="w-5 h-5 mt-0.5 text-purple-600 focus:ring-purple-500">
+                            <div>
+                                <span class="block font-medium">Minimalist / High-Yield</span>
+                                <span class="text-sm text-gray-500">เรียบง่าย สะอาดตา เน้นใจความสำคัญ (High-yield facts)</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="style" value="Gamified: มีลูกเล่นสไตล์เกม แข่งขัน สะสมคะแนน เพื่อลดความเครียด" class="w-5 h-5 mt-0.5 text-purple-600 focus:ring-purple-500">
+                            <div>
+                                <span class="block font-medium">Gamified</span>
+                                <span class="text-sm text-gray-500">มีลูกเล่นสไตล์เกม แข่งขัน สะสมคะแนน เพื่อลดความเครียด</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="style" value="Visual-based: เน้นภาพประกอบ อวัยวะ แผนผัง ไดอะแกรม ให้เห็นภาพชัดเจน" class="w-5 h-5 mt-0.5 text-purple-600 focus:ring-purple-500">
+                            <div>
+                                <span class="block font-medium">Visual-based</span>
+                                <span class="text-sm text-gray-500">เน้นภาพประกอบ แผนผัง ไดอะแกรม (Diagram/Algorithm)</span>
+                            </div>
+                        </label>
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="style" value="Interactive Ward-Round: สไตล์การราวด์วอร์ด หรือถาม-ตอบข้างเตียงผู้ป่วย" class="w-5 h-5 mt-0.5 text-purple-600 focus:ring-purple-500">
+                            <div>
+                                <span class="block font-medium">Interactive Ward-Round</span>
+                                <span class="text-sm text-gray-500">สไตล์การราวด์วอร์ด หรือถาม-ตอบวิเคราะห์เคสผู้ป่วย</span>
+                            </div>
+                        </label>
+                        <div class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition focus-within:ring-1 focus-within:ring-purple-500 focus-within:border-purple-500 col-span-1 md:col-span-2">
+                            <input type="radio" name="style" value="other" id="styleOtherRadio" class="w-5 h-5 text-purple-600 focus:ring-purple-500">
+                            <label for="styleOtherRadio" class="whitespace-nowrap font-medium cursor-pointer">อื่นๆ:</label>
+                            <input type="text" id="styleOtherText" class="w-full border-b border-gray-300 focus:border-purple-500 focus:ring-0 p-1 text-sm bg-transparent outline-none text-gray-700" placeholder="ระบุสไตล์ที่ต้องการ" onfocus="document.getElementById('styleOtherRadio').checked = true;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 5. [G] Game Mechanics -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div class="bg-rose-50 px-6 py-4 border-b border-rose-100 flex items-center gap-3">
+                    <span class="bg-rose-600 text-white font-bold w-8 h-8 rounded-full flex items-center justify-center">G</span>
+                    <h2 class="text-xl font-semibold text-rose-800">Game Mechanics: รูปแบบและกลไกของเกม</h2>
+                </div>
+                <div class="p-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 max-h-[500px] overflow-y-auto pr-2 custom-scrollbar">
+                        <!-- 1 -->
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="gameType" value="เกมจำลองสถานการณ์คลินิก / Virtual Patient Simulation" class="w-5 h-5 mt-0.5 text-rose-600 focus:ring-rose-500" required>
+                            <div>
+                                <span class="block font-medium text-gray-800">เกมจำลองสถานการณ์คลินิก (Virtual Patient)</span>
+                                <span class="text-sm text-gray-500 block mb-1">ให้ผู้เล่นซักประวัติ ตรวจร่างกาย และสั่งการรักษาผู้ป่วยจำลอง</span>
+                                <span class="text-xs text-gray-400 block leading-relaxed">ตัวอย่าง: Interactive Case Study, Branching Scenario, Decision Making, ER Triage Simulation</span>
+                            </div>
+                        </label>
+                        <!-- 2 -->
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="gameType" value="เกมตอบคำถามประลองความเร็ว / Medical Quiz Battle" class="w-5 h-5 mt-0.5 text-rose-600 focus:ring-rose-500">
+                            <div>
+                                <span class="block font-medium text-gray-800">เกมตอบคำถาม / Medical Quiz Battle</span>
+                                <span class="text-sm text-gray-500 block mb-1">ทดสอบความรู้ MCQ/High-yield facts แบบมีจับเวลา</span>
+                                <span class="text-xs text-gray-400 block leading-relaxed">ตัวอย่าง: Kahoot-style, Board Review Quiz, Timed Challenge, Trivia Battle, USMLE/NLCM style Quiz</span>
+                            </div>
+                        </label>
+                        <!-- 3 -->
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="gameType" value="เกมจับคู่ (Matching: อาการ, รอยโรค, ยา)" class="w-5 h-5 mt-0.5 text-rose-600 focus:ring-rose-500">
+                            <div>
+                                <span class="block font-medium text-gray-800">เกมจับคู่ / Matching Game</span>
+                                <span class="text-sm text-gray-500 block mb-1">จับคู่อาการกับโรค ยาคู่กับกลไก หรือรูปภาพ X-ray กับรอยโรค</span>
+                                <span class="text-xs text-gray-400 block leading-relaxed">ตัวอย่าง: Pathology/Histology Match, Pharmacology Match, Anatomy Labeling, Drag and Drop Matching</span>
+                            </div>
+                        </label>
+                        <!-- 4 -->
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="gameType" value="เกมการ์ดความจำ / Flashcard Space-Repetition" class="w-5 h-5 mt-0.5 text-rose-600 focus:ring-rose-500">
+                            <div>
+                                <span class="block font-medium text-gray-800">เกมการ์ดความจำ / Flashcard Game</span>
+                                <span class="text-sm text-gray-500 block mb-1">การทบทวนความรู้แบบสุ่ม หรือ Spaced Repetition (เช่น Anki)</span>
+                                <span class="text-xs text-gray-400 block leading-relaxed">ตัวอย่าง: Memory Card, Rapid Fire Recall, Diagnostic Criteria Flashcards</span>
+                            </div>
+                        </label>
+                        <!-- 5 -->
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="gameType" value="เกมปริศนาและวินิจฉัย / Diagnostic Mystery (Escape Room)" class="w-5 h-5 mt-0.5 text-rose-600 focus:ring-rose-500">
+                            <div>
+                                <span class="block font-medium text-gray-800">เกมปริศนาวินิจฉัย / Escape Room</span>
+                                <span class="text-sm text-gray-500 block mb-1">ตามหาร่องรอยจากผล Lab/X-ray เพื่อวินิจฉัยโรคให้สำเร็จ</span>
+                                <span class="text-xs text-gray-400 block leading-relaxed">ตัวอย่าง: Diagnostic Mystery, Medical Escape Room, Code Blue Challenge, Find the Clue</span>
+                            </div>
+                        </label>
+                        <!-- 6 -->
+                        <label class="flex items-start space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 cursor-pointer transition">
+                            <input type="radio" name="gameType" value="เกมบริหารจัดการโรงพยาบาล / Ward Management Simulation" class="w-5 h-5 mt-0.5 text-rose-600 focus:ring-rose-500">
+                            <div>
+                                <span class="block font-medium text-gray-800">เกมบริหารจัดการ / Ward Management</span>
+                                <span class="text-sm text-gray-500 block mb-1">ฝึกการจัดลำดับความสำคัญ (Prioritization) การจัดการคิวผู้ป่วย</span>
+                                <span class="text-xs text-gray-400 block leading-relaxed">ตัวอย่าง: Resource Management, ER Triage Queue, On-call Night Shift Simulator</span>
+                            </div>
+                        </label>
+                        <!-- Other -->
+                        <div class="flex items-center space-x-3 p-3 rounded-lg border border-gray-200 hover:bg-gray-50 transition focus-within:ring-1 focus-within:ring-rose-500 focus-within:border-rose-500 col-span-1 md:col-span-2">
+                            <input type="radio" name="gameType" value="other" id="gameTypeOtherRadio" class="w-5 h-5 text-rose-600 focus:ring-rose-500">
+                            <label for="gameTypeOtherRadio" class="whitespace-nowrap font-medium cursor-pointer">อื่นๆ:</label>
+                            <input type="text" id="gameTypeOtherText" class="w-full border-b border-gray-300 focus:border-rose-500 focus:ring-0 p-1 text-sm bg-transparent outline-none text-gray-700" placeholder="ระบุรูปแบบเกมที่ต้องการ" onfocus="document.getElementById('gameTypeOtherRadio').checked = true;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="text-center pt-4 pb-8">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg py-4 px-10 rounded-full shadow-lg hover:shadow-xl transition transform hover:-translate-y-1 flex items-center justify-center gap-2 mx-auto w-full md:w-auto">
+                    <i data-lucide="wand-2"></i>
+                    สร้าง Prompt
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Modal Popup -->
+    <div id="resultModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4 backdrop-blur-sm transition-opacity">
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl overflow-hidden flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="bg-blue-600 p-4 px-6 flex justify-between items-center text-white shrink-0">
+                <h3 class="text-xl font-bold flex items-center gap-2">
+                    <i data-lucide="check-circle-2"></i> Prompt ของคุณพร้อมแล้ว!
+                </h3>
+                <button type="button" id="closeModalBtn" class="text-blue-100 hover:text-white transition">
+                    <i data-lucide="x" class="w-6 h-6"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body -->
+            <div class="p-6 overflow-y-auto grow">
+                <p class="text-gray-600 mb-4 text-sm">คัดลอกข้อความด้านล่างนี้ไปวางใน AI (เช่น ChatGPT, Claude หรือ Canva AI) เพื่อสร้างเนื้อหาได้เลยครับ</p>
+                <div class="relative group">
+                    <textarea id="promptResult" class="w-full h-64 p-4 bg-gray-50 border border-gray-200 rounded-xl resize-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-gray-800 leading-relaxed text-sm md:text-base font-mono" readonly></textarea>
+                </div>
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="bg-gray-50 p-4 border-t flex justify-end gap-3 shrink-0">
+                <button type="button" id="closeModalBtn2" class="px-5 py-2.5 rounded-lg text-gray-600 font-medium hover:bg-gray-200 transition">
+                    ปิดหน้าต่าง
+                </button>
+                <button type="button" id="copyBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-lg font-medium flex items-center gap-2 transition shadow-sm">
+                    <span id="copyIconWrapper"><i data-lucide="copy" class="w-5 h-5"></i></span>
+                    <span id="copyBtnText">คัดลอก Prompt</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        // Elements
+        const form = document.getElementById('promptForm');
+        const modal = document.getElementById('resultModal');
+        const promptResultTextarea = document.getElementById('promptResult');
+        const closeModalBtns = [document.getElementById('closeModalBtn'), document.getElementById('closeModalBtn2')];
+        const copyBtn = document.getElementById('copyBtn');
+        const copyBtnText = document.getElementById('copyBtnText');
+        const copyIconWrapper = document.getElementById('copyIconWrapper');
+
+        // Helper function to get radio value (handling 'other')
+        function getRadioValue(name, otherTextId) {
+            const selected = document.querySelector(`input[name="${name}"]:checked`);
+            if (!selected) return 'ไม่ระบุ';
+            
+            if (selected.value === 'other') {
+                const otherText = document.getElementById(otherTextId).value.trim();
+                return otherText ? otherText : '(ไม่ได้ระบุรายละเอียด)';
+            }
+            return selected.value;
+        }
+
+        // Handle form submission
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // 1. [E] Explain
+            const explain = getRadioValue('explain', 'explainOtherText');
+
+            // 2. [A] Assign
+            const subject = getRadioValue('subject', 'subjectOtherText');
+            const gradeSelected = document.querySelector('input[name="grade"]:checked');
+            const grade = gradeSelected ? gradeSelected.value : 'ไม่ระบุ';
+            const assign = `สาขาวิชา/ภาควิชา: ${subject} สำหรับระดับ: ${grade}`;
+
+            // 3. [S] Specify
+            const topic = document.getElementById('topic').value.trim() || 'ไม่ระบุ';
+            
+            // Get Checkboxes for Question Types
+            let qTypes = [];
+            document.querySelectorAll('input[name="qType"]:checked').forEach(cb => {
+                if (cb.value === 'other') {
+                    const otherVal = document.getElementById('qTypeOtherText').value.trim();
+                    if (otherVal) qTypes.push(otherVal);
+                } else {
+                    qTypes.push(cb.value);
+                }
+            });
+            const qTypesStr = qTypes.length > 0 ? qTypes.join(', ') : 'ไม่ระบุรูปแบบคำถาม';
+            const specify = `หัวข้อบทเรียน: "${topic}", รูปแบบคำถาม/โจทย์: ${qTypesStr}`;
+
+            // 4. [Y] Your Style
+            const style = getRadioValue('style', 'styleOtherText');
+
+            // 5. [G] Game Mechanics
+            const gameType = getRadioValue('gameType', 'gameTypeOtherText');
+
+            // Construct Final Prompt
+            const finalPrompt = `คุณคือผู้เชี่ยวชาญด้านแพทยศาสตรศึกษา (Medical Education) และการสร้างสื่อการเรียนรู้อินเทอร์แอคทีฟ (Interactive Learning) โปรดใช้ข้อมูลด้านล่างนี้ในการออกแบบและสร้าง Prompt/เนื้อหา:
+
+[1. [E] Explain: รูปแบบทรัพยากรที่ต้องการ]: ${explain} 
+[2. [A] Assign: กลุ่มเป้าหมาย]: ${assign} 
+[3. [S] Specify: เนื้อหาและรูปแบบคำถาม]: ${specify} 
+[4. [Y] Your Style: สไตล์การนำเสนอ]: ${style}
+[5. [G] Game Mechanics: กลไกและรูปแบบกิจกรรม]: ${gameType}`;
+
+            // Set text to textarea and show modal
+            promptResultTextarea.value = finalPrompt;
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            
+            // Reset copy button state
+            copyBtnText.textContent = 'คัดลอก Prompt';
+            copyBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+            copyBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+            copyIconWrapper.innerHTML = '<i data-lucide="copy" class="w-5 h-5"></i>';
+            lucide.createIcons();
+        });
+
+        // Close Modal Handlers
+        function closeModal() {
+            modal.classList.add('hidden');
+            document.body.style.overflow = ''; // Restore background scrolling
+        }
+
+        closeModalBtns.forEach(btn => btn.addEventListener('click', closeModal));
+
+        // Close modal when clicking outside
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) {
+                closeModal();
+            }
+        });
+
+        // Copy to Clipboard Handler
+        copyBtn.addEventListener('click', function() {
+            // Select the text
+            promptResultTextarea.select();
+            promptResultTextarea.setSelectionRange(0, 99999); // For mobile devices
+
+            try {
+                // Use the older execCommand for better compatibility in iframes
+                const successful = document.execCommand('copy');
+                
+                if(successful) {
+                    // Visual feedback
+                    copyBtnText.textContent = 'คัดลอกสำเร็จ!';
+                    copyBtn.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                    copyBtn.classList.add('bg-green-600', 'hover:bg-green-700');
+                    copyIconWrapper.innerHTML = '<i data-lucide="check" class="w-5 h-5"></i>';
+                    lucide.createIcons();
+
+                    // Reset after 2 seconds
+                    setTimeout(() => {
+                        copyBtnText.textContent = 'คัดลอก Prompt';
+                        copyBtn.classList.remove('bg-green-600', 'hover:bg-green-700');
+                        copyBtn.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                        copyIconWrapper.innerHTML = '<i data-lucide="copy" class="w-5 h-5"></i>';
+                        lucide.createIcons();
+                    }, 2000);
+                } else {
+                    alert('ไม่สามารถคัดลอกได้ กรุณาคัดลอกด้วยตนเอง');
+                }
+            } catch (err) {
+                console.error('Failed to copy text: ', err);
+                alert('เบราว์เซอร์ของคุณไม่รองรับการคัดลอกอัตโนมัติ กรุณาคลุมดำแล้วคัดลอกเองครับ');
+            }
+        });
+    </script>
+</body>
+</html>
