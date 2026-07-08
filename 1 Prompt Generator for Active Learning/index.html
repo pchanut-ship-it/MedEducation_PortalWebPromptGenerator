@@ -525,18 +525,15 @@
     </header>
 
     <main>
-        <!-- Sidebar -->
         <aside class="sidebar">
             <div class="search-box">
                 <i class="fa-solid fa-search"></i>
                 <input type="text" id="searchInput" placeholder="ค้นหา Template...">
             </div>
             <div class="template-list" id="templateList">
-                <!-- Items populated via JS -->
-            </div>
+                </div>
         </aside>
 
-        <!-- Main Content -->
         <div class="content" id="contentArea">
             <div class="panel empty-state" id="emptyState">
                 <i class="fa-solid fa-wand-magic-sparkles"></i>
@@ -545,7 +542,6 @@
             </div>
             
             <div id="activeState" style="display: none; flex-direction: column; gap: 2.5rem;">
-                <!-- Form Panel -->
                 <div class="panel">
                     <div class="panel-header">
                         <h2 class="panel-title"><i class="fa-solid fa-sliders"></i> <span id="lblTitle">Template Name</span></h2>
@@ -555,11 +551,9 @@
                     </div>
                     
                     <div id="variablesForm" class="form-grid">
-                        <!-- Inputs populated via JS -->
-                    </div>
+                        </div>
                 </div>
 
-                <!-- Result Panel -->
                 <div class="panel">
                     <div class="panel-header">
                         <h2 class="panel-title"><i class="fa-solid fa-terminal"></i> ผลลัพธ์ Prompt</h2>
@@ -582,10 +576,8 @@
         <i class="fa-solid fa-check-circle"></i> คัดลอก Prompt สำเร็จ!
     </div>
 
-    <!-- Data source -->
     <script src="data.js"></script>
     
-    <!-- Application Logic -->
     <script>
         const descriptions = {
             "Flipped Classroom": "ผู้เรียนศึกษาเนื้อหามาก่อนล่วงหน้า และใช้เวลาในห้องเรียนสำหรับทำกิจกรรมและประยุกต์ใช้ความรู้",
@@ -645,8 +637,18 @@
                     
                     if (line === "วัตถุประสงค์:" && i > 0) {
                         let title = lines[i-1].trim();
+                        
                         // Ignore some malformed titles
                         if(title.length > 100) continue; 
+                        
+                        // แก้ปัญหาการจับคำ (Bleeding) 
+                        if (currentTemplate && captureMode && currentTemplate[captureMode]) {
+                            let prevData = currentTemplate[captureMode];
+                            let bleedIndex = prevData.lastIndexOf(title);
+                            if (bleedIndex !== -1) {
+                                currentTemplate[captureMode] = prevData.substring(0, bleedIndex).trim();
+                            }
+                        }
                         
                         currentTemplate = {
                             title: title,
