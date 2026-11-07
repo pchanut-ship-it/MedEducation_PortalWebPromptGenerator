@@ -1,308 +1,668 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Prompt Generator Portal</title>
+    <title>MedEd Prompt Studio | AI Prompt Generator Portal</title>
+    <meta name="description" content="AI prompt generators for medical education: teaching design, images, music, interactive games and motion graphics.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #0f172a;
-            --text-color: #f8fafc;
-            --card-bg: rgba(30, 41, 59, 0.7);
-            --card-border: rgba(255, 255, 255, 0.1);
-            --accent-1: #3b82f6;
-            --accent-2: #8b5cf6;
-            --accent-3: #10b981;
-            --accent-4: #f59e0b;
-            --btn-hover: rgba(255, 255, 255, 0.1);
+            --bg: #05070d;
+            --panel: rgba(255, 255, 255, 0.035);
+            --panel-strong: rgba(255, 255, 255, 0.06);
+            --line: rgba(255, 255, 255, 0.08);
+            --line-strong: rgba(255, 255, 255, 0.18);
+            --text: #f5f7fb;
+            --muted: #9aa3b5;
+            --dim: #6b7385;
+            --radius: 28px;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
             min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            position: relative;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* Animated background blobs */
-        .blob {
+        /* ---------- Background: aurora + grid + noise ---------- */
+        .bg {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        .aurora {
             position: absolute;
-            filter: blur(80px);
-            z-index: -1;
-            opacity: 0.5;
-            animation: move 10s infinite alternate;
+            border-radius: 50%;
+            filter: blur(110px);
+            opacity: 0.55;
+            mix-blend-mode: screen;
+            animation: drift 22s ease-in-out infinite alternate;
+        }
+        .a1 { width: 620px; height: 620px; background: #2563eb; top: -220px; left: -120px; }
+        .a2 { width: 560px; height: 560px; background: #7c3aed; top: -160px; right: -160px; animation-delay: -6s; }
+        .a3 { width: 520px; height: 520px; background: #e11d48; bottom: -260px; left: 30%; opacity: 0.3; animation-delay: -12s; }
+        @keyframes drift {
+            0%   { transform: translate(0, 0) scale(1); }
+            50%  { transform: translate(60px, 40px) scale(1.08); }
+            100% { transform: translate(-40px, 80px) scale(0.95); }
+        }
+        .grid-lines {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(var(--line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--line) 1px, transparent 1px);
+            background-size: 64px 64px;
+            mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+            -webkit-mask-image: radial-gradient(ellipse 80% 60% at 50% 0%, #000 30%, transparent 75%);
+            opacity: 0.6;
         }
 
-        .blob-1 {
-            top: -10%;
-            left: -10%;
-            width: 500px;
-            height: 500px;
-            background: radial-gradient(circle, var(--accent-1), transparent 70%);
-            animation-delay: 0s;
-        }
+        .wrap { width: 100%; max-width: 1240px; margin: 0 auto; padding: 0 28px; }
 
-        .blob-2 {
-            bottom: -10%;
-            right: -10%;
-            width: 600px;
-            height: 600px;
-            background: radial-gradient(circle, var(--accent-2), transparent 70%);
-            animation-delay: -5s;
+        /* ---------- Nav ---------- */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            backdrop-filter: blur(18px) saturate(140%);
+            -webkit-backdrop-filter: blur(18px) saturate(140%);
+            background: rgba(5, 7, 13, 0.55);
+            border-bottom: 1px solid var(--line);
         }
-
-        @keyframes move {
-            from { transform: translate(0, 0) scale(1); }
-            to { transform: translate(50px, 50px) scale(1.1); }
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        header h1 {
-            font-size: 3rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #fff, #94a3b8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 1rem;
-        }
-
-        header p {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
-        }
-
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 2rem;
-            width: 100%;
-            max-width: 1200px;
-            z-index: 1;
-        }
-
-        .card {
-            background: var(--card-bg);
-            border: 1px solid var(--card-border);
-            border-radius: 16px;
-            padding: 2rem;
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .card-icon {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
+        .nav-inner {
             display: flex;
             align-items: center;
-            justify-content: center;
-            margin-bottom: 1.5rem;
-            transition: transform 0.3s ease;
+            justify-content: space-between;
+            height: 68px;
         }
-
-        .card:hover .card-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        .icon-teaching { background: rgba(59, 130, 246, 0.15); color: var(--accent-1); }
-        .icon-image { background: rgba(139, 92, 246, 0.15); color: var(--accent-2); }
-        .icon-music { background: rgba(16, 185, 129, 0.15); color: var(--accent-3); }
-        .icon-game { background: rgba(245, 158, 11, 0.15); color: var(--accent-4); }
-
-        .card-content h2 {
-            font-size: 1.4rem;
-            margin-bottom: 0.75rem;
-            font-weight: 600;
-        }
-
-        .card-content p {
-            color: #cbd5e1;
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 2rem;
-        }
-
-        .card-actions {
+        .brand {
             display: flex;
-            gap: 1rem;
-            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            letter-spacing: -0.01em;
+            color: var(--text);
+            text-decoration: none;
         }
+        .brand-mark {
+            width: 34px; height: 34px;
+            border-radius: 10px;
+            background: conic-gradient(from 200deg, #3b82f6, #8b5cf6, #f43f5e, #f59e0b, #10b981, #3b82f6);
+            display: grid;
+            place-items: center;
+            box-shadow: 0 0 24px rgba(139, 92, 246, 0.45);
+        }
+        .brand-mark span {
+            width: 14px; height: 14px;
+            border-radius: 4px;
+            background: var(--bg);
+        }
+        .nav-links { display: flex; gap: 6px; }
+        .nav-links a {
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.88rem;
+            font-weight: 500;
+            padding: 8px 14px;
+            border-radius: 999px;
+            transition: color .2s, background .2s;
+        }
+        .nav-links a:hover { color: var(--text); background: var(--panel-strong); }
 
-        .btn {
+        /* ---------- Hero ---------- */
+        .hero { padding: 96px 0 64px; text-align: center; }
+        .eyebrow {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            text-decoration: none;
+            gap: 10px;
+            padding: 7px 16px 7px 8px;
+            border: 1px solid var(--line-strong);
+            border-radius: 999px;
+            background: var(--panel);
+            font-size: 0.82rem;
+            color: var(--muted);
+            margin-bottom: 28px;
+        }
+        .eyebrow b {
+            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
             color: #fff;
-            padding: 0.75rem 1.25rem;
-            border-radius: 8px;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 999px;
+            font-size: 0.75rem;
+        }
+        .hero h1 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(2.6rem, 6.4vw, 5.2rem);
+            line-height: 1.02;
+            letter-spacing: -0.035em;
+            font-weight: 700;
+            max-width: 920px;
+            margin: 0 auto 24px;
+        }
+        .hero h1 .grad {
+            background: linear-gradient(100deg, #60a5fa 0%, #a78bfa 35%, #f472b6 65%, #fbbf24 100%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: shimmer 8s linear infinite;
+        }
+        @keyframes shimmer { to { background-position: 200% center; } }
+        .hero p {
+            color: var(--muted);
+            font-size: clamp(1rem, 1.4vw, 1.15rem);
+            line-height: 1.7;
+            max-width: 620px;
+            margin: 0 auto 40px;
+        }
+        .hero-cta { display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+
+        .stats {
+            margin: 64px auto 0;
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            max-width: 720px;
+            border: 1px solid var(--line);
+            border-radius: 20px;
+            background: var(--panel);
+            overflow: hidden;
+        }
+        .stat { padding: 20px 16px; }
+        .stat + .stat { border-left: 1px solid var(--line); }
+        .stat strong {
+            display: block;
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.8rem;
+            letter-spacing: -0.02em;
+        }
+        .stat span { color: var(--dim); font-size: 0.82rem; }
+
+        /* ---------- Buttons ---------- */
+        .btn {
+            --c: #fff;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px 20px;
+            border-radius: 999px;
             font-size: 0.9rem;
             font-weight: 600;
-            transition: all 0.2s ease;
+            text-decoration: none;
+            color: var(--text);
+            border: 1px solid var(--line-strong);
+            background: var(--panel);
+            transition: transform .25s ease, background .25s ease, border-color .25s ease, box-shadow .25s ease;
+            white-space: nowrap;
+        }
+        .btn:hover { transform: translateY(-2px); background: var(--panel-strong); border-color: rgba(255,255,255,.3); }
+        .btn svg { width: 16px; height: 16px; transition: transform .25s ease; }
+        .btn:hover svg { transform: translate(3px, -3px); }
+        .btn-solid { background: #fff; color: #05070d; border-color: transparent; }
+        .btn-solid:hover { background: #fff; box-shadow: 0 10px 30px rgba(255,255,255,0.18); }
+
+        /* ---------- Section head ---------- */
+        .section { padding: 40px 0 100px; }
+        .section-head {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 36px;
+            flex-wrap: wrap;
+        }
+        .section-head h2 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: clamp(1.8rem, 3vw, 2.4rem);
+            letter-spacing: -0.03em;
+        }
+        .section-head p { color: var(--muted); max-width: 420px; line-height: 1.6; font-size: 0.95rem; }
+
+        /* ---------- Cards ---------- */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 22px;
+        }
+        .card {
+            --accent: #3b82f6;
+            --accent-rgb: 59, 130, 246;
+            grid-column: span 2;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            border-radius: var(--radius);
+            background: linear-gradient(180deg, rgba(255,255,255,0.05), rgba(255,255,255,0.015));
+            border: 1px solid var(--line);
+            overflow: hidden;
+            isolation: isolate;
+            transition: transform .5s cubic-bezier(.2,.8,.2,1), border-color .4s ease, box-shadow .5s ease;
+            transform-style: preserve-3d;
+            opacity: 0;
+            translate: 0 30px;
+            animation: rise .9s cubic-bezier(.2,.8,.2,1) forwards;
+        }
+        .card:nth-child(1) { animation-delay: .05s; }
+        .card:nth-child(2) { animation-delay: .15s; }
+        .card:nth-child(3) { animation-delay: .25s; }
+        .card:nth-child(4) { animation-delay: .35s; }
+        .card:nth-child(5) { animation-delay: .45s; }
+        @keyframes rise { to { opacity: 1; translate: 0 0; } }
+
+        .card.featured { grid-column: span 3; }
+
+        /* Spotlight following the cursor */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            z-index: -1;
+            background: radial-gradient(500px circle at var(--mx, 50%) var(--my, 0%), rgba(var(--accent-rgb), 0.18), transparent 45%);
+            opacity: 0;
+            transition: opacity .4s ease;
+        }
+        .card:hover::after { opacity: 1; }
+        .card:hover {
+            border-color: rgba(var(--accent-rgb), 0.45);
+            box-shadow: 0 30px 80px -20px rgba(var(--accent-rgb), 0.35), 0 0 0 1px rgba(var(--accent-rgb), 0.15) inset;
+        }
+
+        .t-teach  { --accent: #3b82f6; --accent-rgb: 59, 130, 246; }
+        .t-image  { --accent: #8b5cf6; --accent-rgb: 139, 92, 246; }
+        .t-music  { --accent: #10b981; --accent-rgb: 16, 185, 129; }
+        .t-game   { --accent: #f59e0b; --accent-rgb: 245, 158, 11; }
+        .t-motion { --accent: #f43f5e; --accent-rgb: 244, 63, 94; }
+
+        /* Cover */
+        .cover {
+            position: relative;
+            aspect-ratio: 16 / 10;
+            margin: 10px 10px 0;
+            border-radius: calc(var(--radius) - 10px);
+            overflow: hidden;
+            /* Fallback art if the image is missing */
+            background:
+                radial-gradient(circle at 70% 30%, rgba(var(--accent-rgb), 0.55), transparent 55%),
+                radial-gradient(circle at 20% 80%, rgba(var(--accent-rgb), 0.25), transparent 50%),
+                #0b1020;
+        }
+        .card.featured .cover { aspect-ratio: 16 / 9; }
+        .cover img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transform: scale(1.02);
+            transition: transform 1.2s cubic-bezier(.2,.8,.2,1), filter .6s ease;
+            filter: saturate(1.05);
+        }
+        .card:hover .cover img { transform: scale(1.09); filter: saturate(1.2); }
+        .cover::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, transparent 55%, rgba(5,7,13,0.65) 100%);
+            pointer-events: none;
+        }
+        .cover-tags {
+            position: absolute;
+            top: 14px;
+            left: 14px;
+            right: 14px;
+            display: flex;
+            justify-content: space-between;
+            z-index: 2;
+        }
+        .chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 999px;
+            font-size: 0.74rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            background: rgba(5, 7, 13, 0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.14);
+            color: #fff;
+        }
+        .chip .dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--accent);
+            box-shadow: 0 0 10px var(--accent);
+        }
+        .num {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 0.78rem;
+            font-weight: 700;
+            padding: 6px 11px;
+            border-radius: 999px;
+            background: rgba(5,7,13,0.55);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.14);
+        }
+
+        /* Body */
+        .card-body {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            padding: 24px 26px 26px;
             flex: 1;
-            min-width: 110px;
         }
-
-        .btn-primary {
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
         }
-
-        .btn-primary:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: scale(1.03);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        .icon {
+            flex-shrink: 0;
+            width: 40px; height: 40px;
+            border-radius: 12px;
+            display: grid;
+            place-items: center;
+            color: var(--accent);
+            background: rgba(var(--accent-rgb), 0.12);
+            border: 1px solid rgba(var(--accent-rgb), 0.3);
         }
-
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.05);
-            border-color: rgba(255, 255, 255, 0.4);
-            transform: scale(1.03);
-        }
-
-        /* SVG Icons */
-        svg {
-            width: 44px;
-            height: 44px;
-            stroke-width: 1.75;
-            stroke: currentColor;
+        .icon svg {
+            width: 20px; height: 20px;
             fill: none;
+            stroke: currentColor;
+            stroke-width: 1.8;
             stroke-linecap: round;
             stroke-linejoin: round;
         }
+        .card h3 {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.4rem;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+        .card.featured h3 { font-size: 1.7rem; }
+        .card p {
+            color: var(--muted);
+            font-size: 0.94rem;
+            line-height: 1.65;
+        }
+        .tags { display: flex; flex-wrap: wrap; gap: 6px; }
+        .tags span {
+            font-size: 0.74rem;
+            color: var(--dim);
+            padding: 4px 10px;
+            border-radius: 999px;
+            border: 1px solid var(--line);
+        }
+        .card-actions {
+            margin-top: auto;
+            padding-top: 10px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .card .btn-solid:hover { box-shadow: 0 10px 30px rgba(var(--accent-rgb), 0.45); }
 
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2.2rem;
-            }
-            .grid {
-                grid-template-columns: 1fr;
-            }
+        /* ---------- Footer ---------- */
+        footer {
+            border-top: 1px solid var(--line);
+            padding: 32px 0 48px;
+            color: var(--dim);
+            font-size: 0.85rem;
+        }
+        .foot { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+
+        /* ---------- Responsive ---------- */
+        @media (max-width: 1024px) {
+            .cards { grid-template-columns: repeat(2, 1fr); }
+            .card, .card.featured { grid-column: span 1; }
+            .card:last-child { grid-column: span 2; }
+            .card:last-child .cover { aspect-ratio: 21 / 9; }
+        }
+        @media (max-width: 680px) {
+            .nav-links { display: none; }
+            .hero { padding: 64px 0 40px; }
+            .cards { grid-template-columns: 1fr; }
+            .card, .card.featured, .card:last-child { grid-column: span 1; }
+            .card:last-child .cover { aspect-ratio: 16 / 10; }
+            .stats { grid-template-columns: 1fr; }
+            .stat + .stat { border-left: 0; border-top: 1px solid var(--line); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation: none !important; transition: none !important; }
+            .card { opacity: 1; translate: 0 0; }
         }
     </style>
 </head>
 <body>
 
-    <div class="blob blob-1"></div>
-    <div class="blob blob-2"></div>
-
-    <header>
-        <h1>AI Prompt Generators</h1>
-        <p>A central hub for generating effective AI prompts across different domains. Select a tool below to get started.</p>
-    </header>
-
-    <div class="grid">
-        <!-- Teaching Design -->
-        <div class="card">
-            <div class="card-content">
-                <div class="card-icon icon-teaching">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>
-                    </svg>
-                </div>
-                <h2>Teaching Design</h2>
-                <p>Generate prompts tailored for active learning, lesson planning, and educational design.</p>
-            </div>
-            <div class="card-actions">
-                <a href="1 Prompt Generator for Active Learning/index.html" target="_blank" class="btn btn-primary">Open Generator</a>
-            </div>
-        </div>
-
-        <!-- Image Design -->
-        <div class="card">
-            <div class="card-content">
-                <div class="card-icon icon-image">
-                    <svg viewBox="0 0 24 24">
-                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                        <circle cx="8.5" cy="8.5" r="1.5"/>
-                        <polyline points="21 15 16 10 5 21"/>
-                    </svg>
-                </div>
-                <h2>Image Design</h2>
-                <p>Create detailed prompts for medical and educational images.</p>
-            </div>
-            <div class="card-actions">
-                <a href="2 Prompt Generator for MedicalPromptImages/index.html" target="_blank" class="btn btn-primary">Medical Images</a>
-                <a href="https://pchanut-ship-it.github.io/EduImagePromptGallery" target="_blank" class="btn btn-secondary">Gallery</a>
-            </div>
-        </div>
-
-        <!-- Music Design -->
-        <div class="card">
-            <div class="card-content">
-                <div class="card-icon icon-music">
-                    <svg viewBox="0 0 24 24">
-                        <path d="M9 18V5l12-2v13"/>
-                        <circle cx="6" cy="18" r="3"/>
-                        <circle cx="18" cy="16" r="3"/>
-                    </svg>
-                </div>
-                <h2>Music Design</h2>
-                <p>Craft prompts for generating musical compositions and audio tracks.</p>
-            </div>
-            <div class="card-actions">
-                <a href="https://pchanut-ship-it.github.io/MusicalPrompt" target="_blank" class="btn btn-primary">Open Generator</a>
-            </div>
-        </div>
-
-        <!-- Interactive Game -->
-        <div class="card">
-            <div class="card-content">
-                <div class="card-icon icon-game">
-                    <svg viewBox="0 0 24 24">
-                        <line x1="6" y1="12" x2="10" y2="12"/>
-                        <line x1="8" y1="10" x2="8" y2="14"/>
-                        <line x1="15" y1="13" x2="15.01" y2="13"/>
-                        <line x1="18" y1="11" x2="18.01" y2="11"/>
-                        <rect x="2" y="6" width="20" height="12" rx="2"/>
-                    </svg>
-                </div>
-                <h2>Interactive Game</h2>
-                <p>Design prompts for interactive educational games and experiences.</p>
-            </div>
-            <div class="card-actions">
-                <a href="3 Prompt Generator for Interactive Game/index.html" target="_blank" class="btn btn-primary">Open Generator</a>
-            </div>
-        </div>
+    <div class="bg" aria-hidden="true">
+        <div class="aurora a1"></div>
+        <div class="aurora a2"></div>
+        <div class="aurora a3"></div>
+        <div class="grid-lines"></div>
     </div>
 
+    <nav>
+        <div class="wrap nav-inner">
+            <a href="#" class="brand">
+                <span class="brand-mark"><span></span></span>
+                MedEd Prompt Studio
+            </a>
+            <div class="nav-links">
+                <a href="#tools">Tools</a>
+                <a href="https://pchanut-ship-it.github.io/EduImagePromptGallery" target="_blank" rel="noopener">Gallery</a>
+            </div>
+        </div>
+    </nav>
+
+    <header class="hero wrap">
+        <div class="eyebrow"><b>AI</b> Prompt generators for medical educators</div>
+        <h1>Design better learning with <span class="grad">AI prompts</span></h1>
+        <p>Five studios for lessons, medical images, music, interactive games and motion graphics. Pick one and start building better prompts.</p>
+        <div class="hero-cta">
+            <a href="#tools" class="btn btn-solid">
+                Explore tools
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+            </a>
+            <a href="https://pchanut-ship-it.github.io/EduImagePromptGallery" target="_blank" rel="noopener" class="btn">
+                Browse gallery
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+            </a>
+        </div>
+
+        <div class="stats">
+            <div class="stat"><strong>5</strong><span>Prompt studios</span></div>
+            <div class="stat"><strong>4</strong><span>Media types</span></div>
+            <div class="stat"><strong>1</strong><span>Portal for educators</span></div>
+        </div>
+    </header>
+
+    <main class="section wrap" id="tools">
+        <div class="section-head">
+            <h2>Choose your studio</h2>
+            <p>Every tool opens in a new tab, so you can keep this portal open.</p>
+        </div>
+
+        <div class="cards">
+
+            <!-- 1. Teaching Design -->
+            <article class="card featured t-teach">
+                <div class="cover">
+                    <img src="assets/covers/teaching.jpg" alt="Teaching Design cover" loading="lazy" onerror="this.remove()">
+                    <div class="cover-tags">
+                        <span class="chip"><span class="dot"></span>Active Learning</span>
+                        <span class="num">01</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/><path d="M8 7h6M8 11h8"/></svg></span>
+                        <h3>Teaching Design</h3>
+                    </div>
+                    <p>Write prompts for active learning activities, structured lesson plans and modern teaching strategies in medical education.</p>
+                    <div class="tags"><span>Lesson plans</span><span>Case-based</span><span>Assessment</span></div>
+                    <div class="card-actions">
+                        <a href="1 Prompt Generator for Active Learning/index.html" target="_blank" rel="noopener" class="btn btn-solid">
+                            Open generator
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 2. Image Design -->
+            <article class="card featured t-image">
+                <div class="cover">
+                    <img src="assets/covers/image.jpg" alt="Image Design cover" loading="lazy" onerror="this.remove()">
+                    <div class="cover-tags">
+                        <span class="chip"><span class="dot"></span>Visual Assets</span>
+                        <span class="num">02</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span class="icon"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="m21 15-5-5L5 21"/></svg></span>
+                        <h3>Image Design</h3>
+                    </div>
+                    <p>Write detailed prompts for accurate medical illustrations, anatomy diagrams and teaching visuals.</p>
+                    <div class="tags"><span>Anatomy</span><span>Infographics</span><span>Illustration</span></div>
+                    <div class="card-actions">
+                        <a href="2 Prompt Generator for MedicalPromptImages/index.html" target="_blank" rel="noopener" class="btn btn-solid">
+                            Medical images
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                        </a>
+                        <a href="https://pchanut-ship-it.github.io/EduImagePromptGallery" target="_blank" rel="noopener" class="btn">
+                            View gallery
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 3. Music Design -->
+            <article class="card t-music">
+                <div class="cover">
+                    <img src="assets/covers/music.jpg" alt="Music Design cover" loading="lazy" onerror="this.remove()">
+                    <div class="cover-tags">
+                        <span class="chip"><span class="dot"></span>Audio</span>
+                        <span class="num">03</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span class="icon"><svg viewBox="0 0 24 24"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>
+                        <h3>Music Design</h3>
+                    </div>
+                    <p>Write prompts for background scores, jingles and soundtracks for your lessons.</p>
+                    <div class="tags"><span>Soundtrack</span><span>Jingle</span></div>
+                    <div class="card-actions">
+                        <a href="https://pchanut-ship-it.github.io/MusicalPrompt" target="_blank" rel="noopener" class="btn btn-solid">
+                            Open generator
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 4. Interactive Game -->
+            <article class="card t-game">
+                <div class="cover">
+                    <img src="assets/covers/game.jpg" alt="Interactive Game cover" loading="lazy" onerror="this.remove()">
+                    <div class="cover-tags">
+                        <span class="chip"><span class="dot"></span>Gamification</span>
+                        <span class="num">04</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="6" width="20" height="12" rx="3"/><path d="M6 12h4M8 10v4"/><circle cx="15.5" cy="11" r=".8"/><circle cx="17.5" cy="13" r=".8"/></svg></span>
+                        <h3>Interactive Game</h3>
+                    </div>
+                    <p>Write prompts for quizzes, simulations and interactive learning modules.</p>
+                    <div class="tags"><span>Quiz</span><span>Simulation</span></div>
+                    <div class="card-actions">
+                        <a href="3 Prompt Generator for Interactive Game/index.html" target="_blank" rel="noopener" class="btn btn-solid">
+                            Open generator
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+            <!-- 5. Motion Graphic -->
+            <article class="card t-motion">
+                <div class="cover">
+                    <img src="assets/covers/motion.jpg" alt="Motion Graphic cover" loading="lazy" onerror="this.remove()">
+                    <div class="cover-tags">
+                        <span class="chip"><span class="dot"></span>Video</span>
+                        <span class="num">05</span>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="card-title">
+                        <span class="icon"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="m10 8.5 6 3.5-6 3.5z"/></svg></span>
+                        <h3>Motion Graphic</h3>
+                    </div>
+                    <p>Write prompts for animated explainers and motion graphics that make complex topics easier to follow.</p>
+                    <div class="tags"><span>Explainer</span><span>Animation</span></div>
+                    <div class="card-actions">
+                        <a href="https://pchanut-ship-it.github.io/Prompt_Generator_for_Education/motion_prompt_studio.html" target="_blank" rel="noopener" class="btn btn-solid">
+                            Open generator
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg>
+                        </a>
+                    </div>
+                </div>
+            </article>
+
+        </div>
+    </main>
+
+    <footer>
+        <div class="wrap foot">
+            <span>MedEd Prompt Studio · AI for Academic Staff, Faculty of Medicine</span>
+            <span>Srinakharinwirot University</span>
+        </div>
+    </footer>
+
+    <script>
+        // Cursor spotlight + subtle 3D tilt on cards
+        const canHover = window.matchMedia('(hover: hover)').matches &&
+                         !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (canHover) {
+            document.querySelectorAll('.card').forEach(card => {
+                card.addEventListener('mousemove', e => {
+                    const r = card.getBoundingClientRect();
+                    const x = e.clientX - r.left;
+                    const y = e.clientY - r.top;
+                    card.style.setProperty('--mx', x + 'px');
+                    card.style.setProperty('--my', y + 'px');
+                    const rx = ((y / r.height) - 0.5) * -6;
+                    const ry = ((x / r.width) - 0.5) * 6;
+                    card.style.transform = `perspective(1000px) rotateX(${rx}deg) rotateY(${ry}deg) translateY(-6px)`;
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = '';
+                });
+            });
+        }
+    </script>
 </body>
 </html>
